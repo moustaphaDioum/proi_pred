@@ -6,9 +6,9 @@ import time
 import matplotlib.image as mpimg
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 
-# === Charger les images ===
-lapin_img = mpimg.imread("rabbit.png")  # Image des proies (lapins)
-renard_img = mpimg.imread("fox.png")  # Image des prédateurs (renards)
+# === Chargement des images ===
+lapin_img = plt.imread("lapin.png")  # Assure-toi d'avoir "rabbit.png"
+renard_img = plt.imread("renard.png")    # Assure-toi d'avoir "fox.png"
 
 # === Modèle Lotka-Volterra ===
 def lotka_volterra(t, z, alpha, beta, delta, gamma):
@@ -22,10 +22,26 @@ def run_simulation(alpha, beta, delta, gamma, x0, y0, t_max, points):
     t_span = (0, t_max)
     t_eval = np.linspace(*t_span, points)
     sol = solve_ivp(lotka_volterra, t_span, [x0, y0], args=(alpha, beta, delta, gamma), t_eval=t_eval)
-    return sol.t, sol.y[0], sol.y[1]
+
+    # Récupération des solutions
+    t, x, y = sol.t, sol.y[0], sol.y[1]
+
+    # Vérification et mise à jour des populations
+    for i in range(len(t)):
+        if x[i] < 1:  # Si les proies descendent sous 1
+            x[i:] = 0  # Elles restent nulles
+            y[i:] = y[i] * np.exp(-gamma * (t[i:] - t[i]))  # Décroissance exponentielle des prédateurs
+            break  # On arrête la boucle car l'évolution est forcée
+
+        if y[i] < 1:  # Si les prédateurs descendent sous 1
+            y[i:] = 0  # Ils restent nuls
+            x[i:] = x[i] * np.exp(alpha * (t[i:] - t[i]))  # Croissance exponentielle des proies sans prédateurs
+            break  # On arrête la boucle
+
+    return t, x, y
 
 # === Fonction pour ajouter une image à l'affichage ===
-def add_image(ax, img, x, y, zoom=0.05):
+def add_image(ax, img, x, y, zoom=0.02):
     imagebox = OffsetImage(img, zoom=zoom)
     ab = AnnotationBbox(imagebox, (x, y), frameon=False)
     ax.add_artist(ab)
@@ -46,15 +62,15 @@ with col1:
     """)
 
     st.subheader("Paramètres de simulation")
-    alpha = st.slider("Taux de croissance des proies (α)", 0.0, 1.0, 0.4/365, 0.01)
-    beta = st.slider("Taux de prédation (β)", 0.0, 0.1, 0.02, 0.001)
-    delta = st.slider("Conversion des proies en prédateurs (δ)", 0.0, 0.2, 0.1, 0.001)
-    gamma = st.slider("Mortalité des prédateurs (γ)", 0.0, 1.0, 0.3, 0.01)
+    alpha = st.slider("Taux de croissance des proies (α)", 0.0, 1.0, 0.33, 0.05)
+    beta = st.slider("Taux de prédation (β)", 0.0, 1.0, 0.02, 0.04)
+    delta = st.slider("Conversion des proies en prédateurs (δ)", 0.0, 1.0, 0.02, 0.05)
+    gamma = st.slider("Mortalité des prédateurs (γ)", 0.0, 1.0, 0.3, 0.02)
 
-    x0 = st.number_input("Population initiale des proies", 0, 1000, 10)
-    y0 = st.number_input("Population initiale des prédateurs", 0, 1000, 5)
+    x0 = st.number_input("Population initiale des proies", 0, 1000, 100)
+    y0 = st.number_input("Population initiale des prédateurs", 0, 1000, 20)
 
-    t_max = st.slider("Temps de simulation", 1, 100, 5)
+    t_max = st.slider("Temps de simulation", 5, 100, 10)
 
     # Bouton pour lancer la simulation
     run_simulation_btn = st.button("Simuler 🚀")
