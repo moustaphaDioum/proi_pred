@@ -47,13 +47,25 @@ def add_image(ax, img, x, y, zoom=0.02):
     ax.add_artist(ab)
 
 # === Interface Streamlit ===
-st.title("Simulation Lotka-Volterra 🦊🐰")
+st.markdown("""
+    <style>
+        .stApp {
+            background-color: #e0e0e0;
+        }
+        .stMarkdown, .stText, .stSubheader, .stTitle , .stSlider{
+            color: #8e44ad;  /* Couleur de tous les textes */
+        }
+    </style>
+""", unsafe_allow_html=True)
+
+st.markdown('<h1 style="color: #4CAF50;">Simulation Lotka-Volterra 🦊🐰</h1>', unsafe_allow_html=True)
+
 
 # === Organisation en colonnes ===
 col1, col2 = st.columns([1, 2])
 
 with col1:
-    st.subheader("Modèle mathématique")
+    st.markdown('<p style="color: #8e44ad;">Modèle mathématique</p>', unsafe_allow_html=True)
     st.latex(r"""
     \begin{cases}
     \frac{dx}{dt} = \alpha x - \beta xy \\ 
@@ -61,16 +73,32 @@ with col1:
     \end{cases}
     """)
 
-    st.subheader("Paramètres de simulation")
-    alpha = st.slider("Taux de croissance des proies (α)", 0.0, 1.0, 0.33, 0.05)
-    beta = st.slider("Taux de prédation (β)", 0.0, 1.0, 0.02, 0.04)
-    delta = st.slider("Conversion des proies en prédateurs (δ)", 0.0, 1.0, 0.02, 0.05)
-    gamma = st.slider("Mortalité des prédateurs (γ)", 0.0, 1.0, 0.3, 0.02)
+    st.markdown('<p style="color: #8e44ad;">Paramètres de simulation</p>', unsafe_allow_html=True)
 
-    x0 = st.number_input("Population initiale des proies", 0, 1000, 100)
-    y0 = st.number_input("Population initiale des prédateurs", 0, 1000, 20)
+    # Texte personnalisé avec couleur #8e44ad
+    st.markdown('<p style="color: #8e44ad;">Taux de croissance des proies (α)</p>', unsafe_allow_html=True)
+    alpha = st.slider(" ", 0.0, 1.0, 0.33, 0.05)
 
-    t_max = st.slider("Temps de simulation", 5, 100, 10)
+    # Texte personnalisé avec couleur #8e44ad
+    st.markdown('<p style="color: #8e44ad;">Taux de prédation (β)</p>', unsafe_allow_html=True)
+    beta = st.slider(" ", 0.0, 1.0, 0.02, 0.04)
+    
+    st.markdown('<p style="color: #8e44ad;">Conversion des proies en prédateurs (δ)</p>', unsafe_allow_html=True)
+    delta = st.slider(" ", 0.0, 1.0, 0.02, 0.05)
+    
+    st.markdown('<p style="color: #8e44ad;">Mortalité des prédateurs (γ)</p>', unsafe_allow_html=True)
+    gamma = st.slider(" ", 0.0, 1.0, 0.3, 0.02)
+    
+    st.markdown('<p style="color: #8e44ad;">Population initiale des proies</p>', unsafe_allow_html=True)
+    x0 = st.number_input(" ", 0, 1000, 100)
+    
+    st.markdown('<p style="color: #8e44ad;">Population initiale des prédateurs</p>', unsafe_allow_html=True)
+    y0 = st.number_input(" ", 0, 1000, 20)
+    
+    st.markdown('<p style="color: #8e44ad;">Temps de simulation</p>', unsafe_allow_html=True)
+    t_max = st.slider(" ", 5, 100, 10)
+
+   # points = st.slider("Nombre de points", 10, 100, 30)
 
     # Bouton pour lancer la simulation
     run_simulation_btn = st.button("Simuler 🚀")
@@ -96,7 +124,7 @@ with col2:
             st.pyplot(fig)
 
             # === ANIMATION AVEC IMAGES ===
-            st.subheader("Évolution des populations 📍")
+            st.markdown('<p style="background-color: #8e44ad; padding: 10px; color: white; font-size: 20px;">Évolution des populations 📍</p>', unsafe_allow_html=True)
 
             # Création d'un espace pour l'affichage dynamique
             plot_spot = st.empty()
